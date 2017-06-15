@@ -108,17 +108,17 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
             return IosKeychainAdapter;
         })();
 
-        var AndroidExternalStorageAdapter = (function () {
-            function AndroidExternalStorageAdapter() {
-                _classCallCheck(this, AndroidExternalStorageAdapter);
+        var AndroidStorageAdapter = (function () {
+            function AndroidStorageAdapter() {
+                _classCallCheck(this, AndroidStorageAdapter);
             }
 
-            _createClass(AndroidExternalStorageAdapter, {
+            _createClass(AndroidStorageAdapter, {
                 read: {
                     value: function read(namespace, key) {
                         var deferred = $q.defer();
                         var filename = "" + namespace + "_" + key;
-                        window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + filename, function (fileEntry) {
+                        window.resolveLocalFileSystemURL(cordova.file.dataDirectory + filename, function (fileEntry) {
                             fileEntry.file(function (file) {
                                 var reader = new FileReader();
                                 reader.onloadend = function (evt) {
@@ -141,7 +141,7 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                 write: {
                     value: function write(namespace, key, val) {
                         var deferred = $q.defer();
-                        window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function (dir) {
+                        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dir) {
                             var filename = "" + namespace + "_" + key;
                             dir.getFile(filename, { create: true }, function (file) {
                                 if (!file) {
@@ -163,7 +163,7 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                 remove: {
                     value: function remove(namespace, key) {
                         var deferred = $q.defer();
-                        window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function (dir) {
+                        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dir) {
                             var filename = "" + namespace + "_" + key;
                             dir.getFile(filename, { create: true }, function (file) {
                                 if (!file) {
@@ -184,7 +184,7 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                 }
             });
 
-            return AndroidExternalStorageAdapter;
+            return AndroidStorageAdapter;
         })();
 
         var getAdapter = function () {
@@ -193,7 +193,7 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
             } else if (isIos) {
                 return new IosKeychainAdapter();
             } else if (isAndroid) {
-                return new AndroidExternalStorageAdapter();
+                return new AndroidStorageAdapter();
             }
         };
 

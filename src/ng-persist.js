@@ -74,11 +74,11 @@
             }
         }
 
-        class AndroidExternalStorageAdapter {
+        class AndroidStorageAdapter {
             read(namespace, key) {
                 const deferred = $q.defer();
                 const filename = `${namespace}_${key}`;
-                window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory + filename, (fileEntry) => {
+                window.resolveLocalFileSystemURL(cordova.file.dataDirectory  + filename, (fileEntry) => {
                     fileEntry.file((file) => {
                         const reader = new FileReader();
                         reader.onloadend = (evt) => {
@@ -99,7 +99,7 @@
             }
             write(namespace, key, val) {
                 const deferred = $q.defer();
-                window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, (dir) => {
+                window.resolveLocalFileSystemURL(cordova.file.dataDirectory , (dir) => {
                     const filename = `${namespace}_${key}`;
                     dir.getFile(filename, { create : true }, (file) => {
                         if (!file) {
@@ -119,7 +119,7 @@
             }
             remove(namespace, key) {
                 const deferred = $q.defer();
-                window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, (dir) => {
+                window.resolveLocalFileSystemURL(cordova.file.dataDirectory , (dir) => {
                     const filename = `${namespace}_${key}`;
                     dir.getFile(filename, { create : true }, (file) => {
                         if (!file) {
@@ -145,7 +145,7 @@
             } else if (isIos) {
                 return new IosKeychainAdapter();
             } else if (isAndroid) {
-                return new AndroidExternalStorageAdapter();
+                return new AndroidStorageAdapter();
             }
         };
 
