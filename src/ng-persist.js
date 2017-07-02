@@ -75,10 +75,14 @@
         }
 
         class AndroidStorageAdapter {
-            read(namespace, key) {
+            read(namespace, key, useExternalStorage) {
                 const deferred = $q.defer();
                 const filename = `${namespace}_${key}`;
-                window.resolveLocalFileSystemURL(cordova.file.dataDirectory  + filename, (fileEntry) => {
+                var storageLocation = cordova.file.dataDirectory;
+                if (useExternalStorage === true) {
+                    storageLocation = cordova.file.externalRootDirectory;
+                }
+                window.resolveLocalFileSystemURL(storageLocation  + filename, (fileEntry) => {
                     fileEntry.file((file) => {
                         const reader = new FileReader();
                         reader.onloadend = (evt) => {
@@ -97,9 +101,13 @@
                 });
                 return deferred.promise;
             }
-            write(namespace, key, val) {
+            write(namespace, key, val, useExternalStorage) {
                 const deferred = $q.defer();
-                window.resolveLocalFileSystemURL(cordova.file.dataDirectory , (dir) => {
+                var storageLocation = cordova.file.dataDirectory;
+                if (useExternalStorage === true) {
+                    storageLocation = cordova.file.externalRootDirectory;
+                }
+                window.resolveLocalFileSystemURL(storageLocation , (dir) => {
                     const filename = `${namespace}_${key}`;
                     dir.getFile(filename, { create : true }, (file) => {
                         if (!file) {
@@ -117,9 +125,13 @@
                 });
                 return deferred.promise;
             }
-            remove(namespace, key) {
+            remove(namespace, key, useExternalStorage) {
                 const deferred = $q.defer();
-                window.resolveLocalFileSystemURL(cordova.file.dataDirectory , (dir) => {
+                var storageLocation = cordova.file.dataDirectory;
+                if (useExternalStorage === true) {
+                    storageLocation = cordova.file.externalRootDirectory;
+                }
+                window.resolveLocalFileSystemURL(storageLocation , (dir) => {
                     const filename = `${namespace}_${key}`;
                     dir.getFile(filename, { create : true }, (file) => {
                         if (!file) {
@@ -150,11 +162,11 @@
         };
 
         return {
-            set(namespace = '', key = null, val = '') {
+            set(namespace = '', key = null, val = '', useExternalStorage = false) {
                 const deferred = $q.defer();
                 const adapter = getAdapter();
                 adapter
-                    .write(namespace, key, val)
+                    .write(namespace, key, val, useExternalStorage)
                     .then(() => {
                         deferred.resolve(val);
                     })
@@ -170,11 +182,11 @@
                     });
                 return deferred.promise;
             },
-            get(namespace = '', key = null, fallback = '') {
+            get(namespace = '', key = null, fallback = '', useExternalStorage = false) {
                 const deferred = $q.defer();
                 const adapter = getAdapter();
                 adapter
-                    .read(namespace, key)
+                    .read(namespace, key, useExternalStorage)
                     .then((val) => {
                         if (val) {
                             deferred.resolve(val);
@@ -188,9 +200,9 @@
                     });
                 return deferred.promise;
             },
-            remove(namespace, key) {
+            remove(namespace, key, useExternalStorage) {
                 const adapter = getAdapter();
-                return adapter.remove(namespace, key);
+                return adapter.remove(namespace, key, useExternalStorage);
             },
         };
     };
