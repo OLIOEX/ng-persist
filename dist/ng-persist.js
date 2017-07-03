@@ -115,10 +115,14 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
 
             _createClass(AndroidStorageAdapter, {
                 read: {
-                    value: function read(namespace, key) {
+                    value: function read(namespace, key, useExternalStorage) {
                         var deferred = $q.defer();
                         var filename = "" + namespace + "_" + key;
-                        window.resolveLocalFileSystemURL(cordova.file.dataDirectory + filename, function (fileEntry) {
+                        var storageLocation = cordova.file.dataDirectory;
+                        if (useExternalStorage === true) {
+                            storageLocation = cordova.file.externalRootDirectory;
+                        }
+                        window.resolveLocalFileSystemURL(storageLocation + filename, function (fileEntry) {
                             fileEntry.file(function (file) {
                                 var reader = new FileReader();
                                 reader.onloadend = function (evt) {
@@ -139,9 +143,13 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                     }
                 },
                 write: {
-                    value: function write(namespace, key, val) {
+                    value: function write(namespace, key, val, useExternalStorage) {
                         var deferred = $q.defer();
-                        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dir) {
+                        var storageLocation = cordova.file.dataDirectory;
+                        if (useExternalStorage === true) {
+                            storageLocation = cordova.file.externalRootDirectory;
+                        }
+                        window.resolveLocalFileSystemURL(storageLocation, function (dir) {
                             var filename = "" + namespace + "_" + key;
                             dir.getFile(filename, { create: true }, function (file) {
                                 if (!file) {
@@ -161,9 +169,13 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                     }
                 },
                 remove: {
-                    value: function remove(namespace, key) {
+                    value: function remove(namespace, key, useExternalStorage) {
                         var deferred = $q.defer();
-                        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dir) {
+                        var storageLocation = cordova.file.dataDirectory;
+                        if (useExternalStorage === true) {
+                            storageLocation = cordova.file.externalRootDirectory;
+                        }
+                        window.resolveLocalFileSystemURL(storageLocation, function (dir) {
                             var filename = "" + namespace + "_" + key;
                             dir.getFile(filename, { create: true }, function (file) {
                                 if (!file) {
@@ -202,10 +214,11 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                 var namespace = arguments[0] === undefined ? "" : arguments[0];
                 var key = arguments[1] === undefined ? null : arguments[1];
                 var val = arguments[2] === undefined ? "" : arguments[2];
+                var useExternalStorage = arguments[3] === undefined ? false : arguments[3];
 
                 var deferred = $q.defer();
                 var adapter = getAdapter();
-                adapter.write(namespace, key, val).then(function () {
+                adapter.write(namespace, key, val, useExternalStorage).then(function () {
                     deferred.resolve(val);
                 })["catch"](function (err) {
                     // if not browser, write to local storage
@@ -223,10 +236,11 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                 var namespace = arguments[0] === undefined ? "" : arguments[0];
                 var key = arguments[1] === undefined ? null : arguments[1];
                 var fallback = arguments[2] === undefined ? "" : arguments[2];
+                var useExternalStorage = arguments[3] === undefined ? false : arguments[3];
 
                 var deferred = $q.defer();
                 var adapter = getAdapter();
-                adapter.read(namespace, key).then(function (val) {
+                adapter.read(namespace, key, useExternalStorage).then(function (val) {
                     if (val) {
                         deferred.resolve(val);
                     } else {
@@ -238,9 +252,9 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                 });
                 return deferred.promise;
             },
-            remove: function remove(namespace, key) {
+            remove: function remove(namespace, key, useExternalStorage) {
                 var adapter = getAdapter();
-                return adapter.remove(namespace, key);
+                return adapter.remove(namespace, key, useExternalStorage);
             } };
     };
     $persist.$inject = ["$q", "$localStorage"];

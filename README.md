@@ -32,6 +32,10 @@ angular.module('myApp', [
 ]);
 ```
 
+On Android data will be persisted (by default) to internal storage on your device 
+(ie bundled within the app and only accessible by your app), however, if you need
+to store data externally, set `useExternalStorage = true`.
+
 Inject ```$persist``` into your controller
 
 ```js
@@ -39,21 +43,21 @@ Inject ```$persist``` into your controller
 
     // write
     $persist
-        .set(namespace, key, val)
+        .set(namespace, key, val, useExternalStorage)
         .then(function () {
             // saved
         });
 
     // read
     $persist
-        .get(namespace, key, fallback)
+        .get(namespace, key, fallback, useExternalStorage)
         .then(function (val) {
             // val is either the value, if exists, or the fallback
         });
 
     // delete
     $persist
-        .remove(namespace, key)
+        .remove(namespace, key, useExternalStorage)
         .then(function () {
             // removed
         });
