@@ -82,6 +82,7 @@
                 if (useExternalStorage === true) {
                     storageLocation = cordova.file.externalRootDirectory;
                 }
+                console.log('AndroidStorageAdapter.read', useExternalStorage, storageLocation)
                 window.resolveLocalFileSystemURL(storageLocation  + filename, (fileEntry) => {
                     fileEntry.file((file) => {
                         const reader = new FileReader();
@@ -107,6 +108,7 @@
                 if (useExternalStorage === true) {
                     storageLocation = cordova.file.externalRootDirectory;
                 }
+                console.log('AndroidStorageAdapter.write', useExternalStorage, storageLocation)
                 window.resolveLocalFileSystemURL(storageLocation , (dir) => {
                     const filename = `${namespace}_${key}`;
                     dir.getFile(filename, { create : true }, (file) => {
@@ -131,6 +133,7 @@
                 if (useExternalStorage === true) {
                     storageLocation = cordova.file.externalRootDirectory;
                 }
+                console.log('AndroidStorageAdapter.remove', useExternalStorage, storageLocation)
                 window.resolveLocalFileSystemURL(storageLocation , (dir) => {
                     const filename = `${namespace}_${key}`;
                     dir.getFile(filename, { create : true }, (file) => {

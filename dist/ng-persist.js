@@ -122,6 +122,7 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                         if (useExternalStorage === true) {
                             storageLocation = cordova.file.externalRootDirectory;
                         }
+                        console.log('AndroidStorageAdapter.read', useExternalStorage, storageLocation)
                         window.resolveLocalFileSystemURL(storageLocation + filename, function (fileEntry) {
                             fileEntry.file(function (file) {
                                 var reader = new FileReader();
@@ -149,6 +150,7 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                         if (useExternalStorage === true) {
                             storageLocation = cordova.file.externalRootDirectory;
                         }
+                        console.log('AndroidStorageAdapter.write', useExternalStorage, storageLocation)
                         window.resolveLocalFileSystemURL(storageLocation, function (dir) {
                             var filename = "" + namespace + "_" + key;
                             dir.getFile(filename, { create: true }, function (file) {
@@ -175,6 +177,7 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
                         if (useExternalStorage === true) {
                             storageLocation = cordova.file.externalRootDirectory;
                         }
+                        console.log('AndroidStorageAdapter.remove', useExternalStorage, storageLocation)
                         window.resolveLocalFileSystemURL(storageLocation, function (dir) {
                             var filename = "" + namespace + "_" + key;
                             dir.getFile(filename, { create: true }, function (file) {
@@ -240,7 +243,7 @@ var _classCallCheck = function (instance, Constructor) { if (!(instance instance
 
                 var deferred = $q.defer();
                 var adapter = getAdapter();
-                adapter.read(namespace, key. useExternalStorage).then(function (val) {
+                adapter.read(namespace, key, useExternalStorage).then(function (val) {
                     if (val) {
                         deferred.resolve(val);
                     } else {
