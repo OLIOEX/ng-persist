@@ -75,12 +75,12 @@
         }
 
         class AndroidStorageAdapter {
-            read(namespace, key, useExternalStorage) {
+            read(namespace, key, internalStorage) {
                 const deferred = $q.defer();
                 const filename = `${namespace}_${key}`;
-                var storageLocation = cordova.file.dataDirectory;
-                if (useExternalStorage === true) {
-                    storageLocation = cordova.file.externalRootDirectory;
+                let storageLocation = cordova.file.externalRootDirectory;
+                if (internalStorage === true) {
+                    storageLocation = cordova.file.dataDirectory;
                 }
                 window.resolveLocalFileSystemURL(storageLocation  + filename, (fileEntry) => {
                     fileEntry.file((file) => {
@@ -101,11 +101,11 @@
                 });
                 return deferred.promise;
             }
-            write(namespace, key, val, useExternalStorage) {
+            write(namespace, key, val, internalStorage) {
                 const deferred = $q.defer();
-                var storageLocation = cordova.file.dataDirectory;
-                if (useExternalStorage === true) {
-                    storageLocation = cordova.file.externalRootDirectory;
+                let storageLocation = cordova.file.externalRootDirectory;
+                if (internalStorage === true) {
+                    storageLocation = cordova.file.dataDirectory;
                 }
                 window.resolveLocalFileSystemURL(storageLocation , (dir) => {
                     const filename = `${namespace}_${key}`;
@@ -125,11 +125,11 @@
                 });
                 return deferred.promise;
             }
-            remove(namespace, key, useExternalStorage) {
+            remove(namespace, key, internalStorage) {
                 const deferred = $q.defer();
-                var storageLocation = cordova.file.dataDirectory;
-                if (useExternalStorage === true) {
-                    storageLocation = cordova.file.externalRootDirectory;
+                let storageLocation = cordova.file.externalRootDirectory;
+                if (internalStorage === true) {
+                    storageLocation = cordova.file.dataDirectory;
                 }
                 window.resolveLocalFileSystemURL(storageLocation , (dir) => {
                     const filename = `${namespace}_${key}`;
@@ -162,11 +162,11 @@
         };
 
         return {
-            set(namespace = '', key = null, val = '', useExternalStorage = false) {
+            set(namespace = '', key = null, val = '', internalStorage = false) {
                 const deferred = $q.defer();
                 const adapter = getAdapter();
                 adapter
-                    .write(namespace, key, val, useExternalStorage)
+                    .write(namespace, key, val, internalStorage)
                     .then(() => {
                         deferred.resolve(val);
                     })
@@ -182,11 +182,11 @@
                     });
                 return deferred.promise;
             },
-            get(namespace = '', key = null, fallback = '', useExternalStorage = false) {
+            get(namespace = '', key = null, fallback = '', internalStorage = false) {
                 const deferred = $q.defer();
                 const adapter = getAdapter();
                 adapter
-                    .read(namespace, key, useExternalStorage)
+                    .read(namespace, key, internalStorage)
                     .then((val) => {
                         if (val) {
                             deferred.resolve(val);
@@ -200,13 +200,13 @@
                     });
                 return deferred.promise;
             },
-            remove(namespace, key, useExternalStorage) {
+            remove(namespace, key, internalStorage) {
                 const adapter = getAdapter();
-                return adapter.remove(namespace, key, useExternalStorage);
+                return adapter.remove(namespace, key, internalStorage);
             },
         };
     };
     $persist.$inject = ['$q', '$localStorage'];
     angular.module('ng-persist').factory('$persist', $persist);
 
-}());
+})();
